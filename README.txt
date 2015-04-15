@@ -1,5 +1,6 @@
-TAMU LaTeX Template version 1.7.
+This repository contains all thesis related materials of Yuzhong Yan in CS of PVAMU.
 
-This version has double spacing around major headings and single spacing around subheadings in the TOC.
+latex is needed to generate pdf file.
 
-Only titlepage.tex and lists.tex hav been changed from version 1.6.
+type make to generate output
+
