@@ -29,39 +29,30 @@ As a dominant method of exploration geophysics in oil \& gas area, reflection se
 
 In the data acquistion stage, seismic sources such as dynamite or air gun are used to generate seismic waves, and the waves are reflected or refracted while encountering different type of materials underground and are recoreded by the receivers. It becames more complicated in non-normal incidence, such as refraction, multiple reflection and cultural noise, and all these factors need to be considered in processing stage. The first step is pre-processing after acquiring the survey data, in which main steps are removing noise and boosting signal leve. Velocity analysis, stacking and migration are main tasks in seismic data processing, and after migration the seismic events are geometrically re-located in either space or time to the location the event occurred in subsurface and create a complete image of subsurface\cite{seisreflection}. The main goal of seismic interpretation is trying to find petroleum reservoir. But such task requires deep analysis of seismic attributes and geophysics related knowledge, and involves huge amount human resource such as computer scientists, geologists and geophysicists etc. In this paper, we focus on latter stage and built a platform that facilitates seismic attributes extraction and analytics.   
 
-A landscape figure should be shown below. 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{sidewaysfigure}[H]
+\begin{figure}[h]
 \centering
-\includegraphics[scale=.50]{figures/Penguins.jpg}
-\caption{TAMU figure - This is an example of a long figure title with a landscape figure.  Figure titles need to be single-spaced within and double spaced between in the list of figures.}
-\label{fig:tamu-fig1-1}
-\end{sidewaysfigure}
+\includegraphics[scale=1]{seismic_reflection_principal.png}
+\caption{Seismic Reflection Outlines\cite{seisreflection}}
+\label{seismic_reflection}
+\end{figure}
+
+%A landscape figure should be shown below. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{sidewaysfigure}[H]
+%\centering
+%\includegraphics[scale=.50]{figures/Penguins.jpg}
+%\caption{TAMU figure - This is an example of a long figure title with a landscape figure.  Figure titles need to be single-spaced within and double spaced between in the list of figures.}
+%\label{fig:tamu-fig1-1}
+%\end{sidewaysfigure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-More text here goes here.
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi augue urna, varius quis facilisis ac, imperdiet et nunc. Vestibulum ante ipsum primis in faucibus. 
 
 \section{Current Processing Methodlogy}
-Maecenas accumsan lobortis dui fringilla suscipit. Quisque congue fringilla dui, sed eleifend sapien fringilla euismod. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas venenatis posuere magna quis tempus. Cras at leo massa, eu ultricies tellus. Nunc nec dictum augue. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus purus felis, mollis id scelerisque in, viverra in elit. Nulla iaculis ultrices justo, ac pharetra nisl rhoncus pulvinar. Duis vitae mauris velit, in congue massa.
+HPC technology has been used to process seismic data for several decades. In most current big oil \& gas companines or related service companines, there must have an IT department and a huge group of geophysicists or data scientists forming the research team. In normal case, each small team set up a research project, and then develop new models or algorithms to verify their idea. In this stage, they only use synthetic or historical small data to do experiments, and their programming environment is MATLAB in general. But why did not they experimentalize on big cluster with actual seismic data? The main reason is geophysicists are not familiar with HPC environment, and their main target is to verify the validity of algorithms or models, but not the performance. The volume size of actual data is usually very large and will take much more time to run with MATLAB codes. After research work was finished and got approval, geophysicists will submit their MATLAB codes to IT departments, and then experts in HPC domain will translate such codes into MPI codes or hybrid OpenMP/MPI codes and verify them on high performance cluster with actual seismic data. If there are any problems in this stage, the original authors need to be involved to find the root cause, and the results were either changing the algorithms or models by geophysicists or modification of programming implementation. To make such research project become a mature product, it often will take one more year with several iterations.
 
-Donec lectus orci, bibendum ut blandit dignissim, molestie non eros. Praesent aliquet feugiat dignissim. Morbi porttitor sollicitudin nisl, non mollis quam ultrices sit amet. Cras feugiat lacinia diam ut convallis. Nam nec varius ante. Nunc a ultrices felis. Quisque luctus sapien et ligula ornare quis consequat urna aliquet. Vestibulum vulputate lorem a tellus auctor id commodo risus sodales. Suspendisse quis tortor a felis molestie laoreet ut a nunc. Donec gravida sapien eget mauris condimentum lacinia. Proin eu purus libero. Nullam augue mi, vestibulum in convallis eu, adipiscing ac arcu. Donec nisi libero, egestas et molestie in, mollis quis ipsum. Sed gravida quam sit amet ante tempus rutrum non in mi. Cras viverra facilisis eros, id vestibulum sapien malesuada eget. Maecenas imperdiet luctus nisi vitae suscipit.
+%\subsection{This is a Very Long Subsection Title This is a Very Long Subsection Title}
 
 
+\section{The Big Challeges}
+In fact, there are problems in current seismic data analytics flow. As shown in previous section, the MATLAB codes work well on sample data do not mean they could run successfully in parallel after translation into MPI codes. The test cases of MATLAB codes are not enough, and the parallization itself may also procuce new problems. The biggest challege in such area is burst increase of data volume size, which also need more advance algorithm and models to process data. For instance, the volume size of high dimension such as 3D even 4D seismic data and high density seismic data are growing exponentially, so seismic data processing becomes bothe computation- and data- intensive problem.  The traditional HPC programming model is good at handle computation intense case, but with the huge increase of volume size, data movement between nodes is the big bottleneck even with infiniband connections. Another problem is the maintainence and reuse of legacy codes; Most of HPC codes in such area were written in Fortran to achieve high performance, the readability and maintenance of such program are also challeges for beginners. With the improvement of CPU computation power and programming architecture, it should not only focus on executation time, but also the overall perfromance of whole team. 
 
-Aliquam erat volutpat. Integer ut mauris elit. Nam et lectus vel neque vehicula commodo. Integer at risus ligula. Fusce mollis mauris sed lorem aliquam bibendum porttitor tellus blandit. Curabitur enim nibh, accumsan eu elementum id, rutrum a ipsum. Vivamus ultricies, elit id ornare iaculis, metus justo posuere quam, sit amet bibendum arcu dolor a eros. Sed in nisl nibh. Aenean egestas est ut tortor volutpat vehicula. Maecenas aliquet placerat nunc hendrerit dictum. In et nisi massa. Pellentesque luctus, sapien quis dignissim vulputate, sapien libero bibendum velit, vitae auctor ipsum nulla at augue. Nulla ac eros vitae tortor elementum vehicula.
-
-Morbi tristique egestas placerat. Cras faucibus eleifend porta. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut a pellentesque neque. Donec sollicitudin metus varius nulla egestas laoreet. Duis non mauris ut nunc adipiscing volutpat. Nam vitae est sed turpis tristique varius. 
-
-\subsection{This is a Very Long Subsection Title This is a Very Long Subsection Title}
-
-More text
-\subsection{Subsection}
-
-Subsection text
-
-\section{The Big Challege}
-
-Section text
