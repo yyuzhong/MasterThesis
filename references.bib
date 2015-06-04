@@ -23755,6 +23755,18 @@ title = {{Apache Hadoop database, a distributed, scalable, big data store}},
 note = {[Retrieved: January, 2014]}
 }
 
+@MISC{ApacheHive,
+howpublished = {{https://hive.apache.org/index.html}},
+title = {{The Apache Hive data warehouse}},
+note = {[Retrieved: June, 2015]}
+}
+
+@MISC{ApachePig,
+howpublished = {{https://pig.apache.org}},
+title = {{Apache Pig: a platform for analyzing large data sets}},
+note = {[Retrieved: June, 2015]}
+}
+
 @MISC{ApacheSpark,
 howpublished = {{http://spark.incubator.apache.org/}},
 title = {{Spark Lightning-fast cluster computing}},
@@ -23765,6 +23777,39 @@ note = {[Retrieved: January, 2014]}
 howpublished = {{https://storm.incubator.apache.org/}},
 title = {{Storm: Distributed and fault-tolerant realtime computation}},
 note = {[Retrieved: January, 2014]}
+}
+
+@MISC{ApacheMesos,
+howpublished = {{http://mesos.apache.org}},
+title = {{Mesos: A distributed systems kernel}},
+note = {[Retrieved: November, 2014]}
+}
+
+@MISC{SparkJobserver,
+howpublished = {{https://github.com/ooyala/spark-jobserver}},
+title = {{Spark Jobserver: REST job server for Spark}},
+note = {[Retrieved: November, 2014]}
+}
+
+@article{SEGYREV1,
+author = {SEG Technical Standards Committee},
+title = {{SEG Y rev 1 Data Exchange format}},
+month = May,
+year = {2002}
+}
+
+@article{SEGDREV21,
+howpublished = {{http://www.seg.org/documents/10161/77915/seg_d_rev2.1.pdf}},
+author = {SEG Technical Standards Committee},
+title = {{SEG-D, Rev 2.1}},
+month = Jan,
+year = {2006}
+}
+
+@MISC{IRISSEED,
+howpublished = {{https://ds.iris.edu/ds/nodes/dmc/data/formats/}},
+title = {{Standard for the Exchange of Earthquake Data}},
+note = {[Retrieved: May, 2015]}
 }
 
 @MISC{CloudStack,
@@ -23810,6 +23855,27 @@ volume = {51},
 month = Jan,
 year = {2008}
 }
+
+@article{BigTableChang1365816,
+ author = {Chang, Fay and Dean, Jeffrey and Ghemawat, Sanjay and Hsieh, Wilson C. and Wallach, Deborah A. and Burrows, Mike and Chandra, Tushar and Fikes, Andrew and Gruber, Robert E.},
+ title = {Bigtable: A Distributed Storage System for Structured Data},
+ journal = {ACM Trans. Comput. Syst.},
+ issue_date = {June 2008},
+ volume = {26},
+ number = {2},
+ month = jun,
+ year = {2008},
+ issn = {0734-2071},
+ pages = {4:1--4:26},
+ articleno = {4},
+ numpages = {26},
+ url = {http://doi.acm.org/10.1145/1365815.1365816},
+ doi = {10.1145/1365815.1365816},
+ acmid = {1365816},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Large-Scale Distributed Storage},
+} 
 
 @inproceedings{SparkRDD,
 address = {San Jose, CA},
@@ -23868,15 +23934,55 @@ year = {2009}
  address = {USA},
 } 
 
+@article{RSIAnalysisHadoop,
+  address = {Doha, QATAR},
+  author = {Mohamed H. Almeer},
+  journal = {International Journal of Emerging Technology and Advanced Engineering},
+  title = {{Hadoop Mapreduce for Remote Sensing Image Analysis}},
+  pages = {443-451},
+  volume = {2},
+  year = {2012}
+}
+@bsthesis{HipiThesis,
+  author = {Chris Sweeney,Liu Liu and Sean Arietta,Jason Lawrence},
+  school = {University of Virginia},
+  title = {{HIPI: A hadoop image processing interface for image-based map reduce tasks}},
+  pages = {2-3},
+  year = {2011}
+}
+@misc{AstroImageHadoop,
+  howpublished = {http://ssg.astro.washington.edu/downloadable/ADASS2010_paper_KeithWiley.pdf},
+  title = {{Astronomical Image Processing with Hadoop}}
+}
+@article{MunetoMR2012,
+  address = {Motooka 744, Nishi-Ku, Fukuoka-Shi, 819-0395, Japan},
+  author = {Muneto Yamamoto,Kunihiko Kaneko},
+  doi = {10.7903/ijecs.1092},
+  journal = {International Journal of Electronic Commerce Studies},
+  keywords = {Hadoop, MapReduce, Image Processing, Sequential Image Database},
+  number = {2},
+  pages = {211-228},
+  title = {{Parallel Image Database Processing with MapReduce and Performance Evaluation in Pseudo Distributed Mode}},
+  url = {http://www.academic-journals.org/ojs2/index.php/ijecs/article/viewFile/1092/124},
+  volume = {3},
+  year = {2012}
+}
+@mastersthesis{KarlMRTartu,
+  author = {Karl Potisepp},
+  school = {Tartu University},
+  pages = {38-39},
+  title = {{Large-scale Image Processing Using MapReduce}},
+  year = {2013}
+}
 
 @inproceedings{YanLarge2014,
-address = {Venice, Italy},
-author = {Yuzhong Yan and Lei Huang},
-booktitle = {CLOUD COMPUTING 2014, The Fifth International Conference on Cloud Computing, GRIDs, and Virtualization},
-title = {{Large-scale Image Processing Research Cloud}},
-month = {May, 25-29},
-year = {2014},
-ISBN={978-1-61208-338-4}
+  address = {Venice, Italy},
+  author = {Yuzhong Yan and Lei Huang},
+  booktitle = {CLOUD COMPUTING 2014, The Fifth International Conference on Cloud Computing, GRIDs, and Virtualization},
+  title = {{Large-scale Image Processing Research Cloud}},
+  month = {May, 25-29},
+  year = {2014},
+  ISBN={978-1-61208-338-4}
 }
 
 @inproceedings{Wang2012,
@@ -23898,12 +24004,11 @@ ISBN={978-1-61208-338-4}
 }
 
 @inproceedings{Xu2014,
-    	 Author = {R.Xu, C. Wang, S.Chandrasekaran, B.Chapman, O. Hernandez},
-    	Booktitle = {IEEE 28th International Parallel and Distributed Processing Symposium Workshop & PhD Forum (IPDPSW), },
-    	Title = {A Validation Testsuite for OpenACC 1.0},
-    	Year = {2014}}
-
-
+   Author = {R.Xu, C. Wang, S.Chandrasekaran, B.Chapman, O. Hernandez},
+   Booktitle = {IEEE 28th International Parallel and Distributed Processing Symposium Workshop & PhD Forum (IPDPSW), },
+   Title = {A Validation Testsuite for OpenACC 1.0},
+   Year = {2014}
+}
 
 @inproceedings{scientific_workflow2007,
   author    = {Yonghong Yan and
@@ -23937,7 +24042,6 @@ ISBN={978-1-61208-338-4}
   year={2006},
   publisher={Springer}
 }
-
 
 @techreport{chapman2005predicting,
   title={Predicting air quality in a production-quality grid environment},
@@ -24323,8 +24427,14 @@ note = {[Retrieved: April, 2015]}
 
 @MISC{RedisNoSQL,
 howpublished = {http://www.redis.io/},
-title = {{Redis:advanced key-value cache and store}},
+title = {{Redis:advanced key\-value cache and store}},
 note = {[Retrieved: April, 2015]}
+}
+
+@MISC{ApacheDrillMain,
+howpublished = {http://drill.apache.org},
+title = {{Apache Drill Schema\-free SQL Query Engine for Hadoop, NoSQL and Cloud Storage}},
+note = {[Retrieved: June, 2015]}
 }
 
 @inproceedings{2670985LiTachyon,
@@ -24600,6 +24710,18 @@ note = {[Retrieved: May, 2015]}
 @MISC{ScalaNLPBreeze,
 howpublished = {http://www.scalanlp.org},
 title = {{ScalaNLP Scientific Computing, Machine Learning, and Natural Language Processing}},
+note = {[Retrieved: May, 2015]}
+}
+
+@MISC{OpendTectMainPage,
+howpublished = {http://opendtect.org},
+title = {{OpendTect, Free Open Source Seismic Interpretation Platform}},
+note = {[Retrieved: May, 2015]}
+}
+
+@MISC{PenobscotData,
+howpublished = {https://opendtect.org/osr/pmwiki.php/Main/PENOBSCOT3DSABLEISLAND},
+title = {{Penobscot 3D\-Survey}},
 note = {[Retrieved: May, 2015]}
 }
 
