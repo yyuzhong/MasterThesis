@@ -81,7 +81,7 @@ As stated in previous charpter, user could create new application that calls API
 \hline
 Elementwise UFuncs & \shortstack[l]{exp, log, log1p, sqrt, \\sin, cos, tan, asin, acos, atan,\\sinh, cosh, tanh, asinh, acosh, atanh, \\floor, ceil, round, rint, signum, \\abs, isOdd, isEven,sigmoid} \\ 
 \hline
-Operator UFuncs &  \shortstack[l]{OpAdd: a + b, OpSub: a - b, OpMulMatrix: a * b, \\OpMulScalar: a :* b, OpSolveMatrixBy: a \textbackslash\ b,\\ OpMulInner: a dot b, OpNeg: -a, OpEq: a :== b, OpNe: a :!= b, \\ OpLT: a :\textless\ b, OpLTE: a :\textless= b, OpGT: a :\textgreater b, OpGTE: a :\textgreater= b, \\OpAnd: a \& b, OpOr: a \textbar\ b, OpNot: !a } \\
+Operator UFuncs &  \shortstack[l]{OpAdd: a + b, OpSub: a - b, OpMulMatrix: a * b, \\OpMulScalar: a :* b, OpSolveMatrixBy: a \textbackslash\ b,\\ OpMulInner: a dot b, OpNeg: -a, OpEq: a :== b,\\OpNe: a :!= b, OpLT: a :\textless\ b, OpLTE: a :\textless= b,\\OpGT: a :\textgreater b, OpGTE: a :\textgreater= b, \\OpAnd: a \& b, OpOr: a \textbar\ b, OpNot: !a } \\
 \hline
 Reduction UFuncs & \shortstack[l]{sum, product, softmax, any, all, \\min, max, argmin, argmax, \\norm, normalize, argsort, argtopk, \\mean, variance, stddev, meanAndVariance }\\
 \hline
@@ -113,18 +113,33 @@ For the performance comparision, the sequential codes are written in Scala and r
 % put performance index of calculactor here.     
 
 \subsection{Fourier \& Hilbert Transformation}
-In signal and image processing, Fourier Transform (FT) is the most commonly used algorithm. The signal in time domain was decomposed into a series of frequencies  through FT, and in the frequency domain, many problems sush as filter are easier to perform comparing with in the time domain. Fast Fourier transform (FFT) \cite{FFTWiki} is an algorithm to compute the discrete Fourier transform (DFT) and its inverse by factorizing the DFT matrix into a product of sparse (mostly zero) factors. There are different implementations of FFT, such as FFTW, OpenCV, Kiss FFT, Breeze etc.   
+In signal and image processing, Fourier Transform (FT) is the most commonly used algorithm. The signal in time domain was decomposed into a series of frequencies  through FT, and in the frequency domain, many problems sush as filter are easier to perform comparing with in the time domain. Fast Fourier transform (FFT) \cite{FFTWiki} is an algorithm to compute the discrete Fourier transform (DFT) and its inverse by factorizing the DFT matrix into a product of sparse (mostly zero) factors. There are different implementations of FFT, such as FFTW, OpenCV, Kiss FFT, Breeze etc. FFTW\cite{FFTW05} emphasizes performance by adapting to the hardware such as SIMD instructions in order to maximize performance, while Breeze aims to be generic, clean and powerful without sacrificing (much) efficiency. Breeze provide more concise interfaces of 1D/2D Fourier transforms and filtering functions, so we use FFT function in Breeze as test case by applying it both in sequential codes and parallel codes runnning on Spark.     
 
-The Hilbert transform \cite{HilbertWiki} is important in the field of signal processing where it is used to derive the analytic representation of a signal u(t). Hilbert transform approach now forms the basis by which almost all amplitude, phase and frequency attributes are calculated by today’s seismic interpretation software \cite{HilbertSeismic}. JTK already provided the Hilbert transform filter class, so we use it as test case by apply Hilbert transform filter on each trace of input seismic data set.
+The Hilbert transform \cite{HilbertWiki} is important in the field of signal processing where it is used to derive the analytic representation of a signal. A great number of geophysical applications consists in close relation of the Hilbert transform to analytic functions of complex variable \cite{HilbertGeoApplication}. Hilbert transform approach now forms the basis by which almost all amplitude, phase and frequency attributes are calculated by today’s seismic interpretation software \cite{HilbertSeismic}. JTK already provided the Hilbert transform filter class, so we use it as test case by apply Hilbert transform filter on each trace of input seismic data set.
 
-Similar to Calculator, we also comparing performance sequential codes on one single node  with parallel codes runnning on Spark with different configuration of memory and cores. 
+Similar to Calculator, we also comparing performance sequential codes on one single node with parallel codes runnning on Spark with different configuration of memory and cores. 
 
+%put performance data of FFT and HTF here.
 
 \subsection{Statistics functions}
+Descriptive statistics is the basis for data analytics, and in seismic data processing, most of statistical functions were already widely used. Spark itself provides some basic reduce functions (also called Actions) such as mean, variance, standard deviation and histogram on RDDs. Besides such basic statistical functions, Breeze also provides a fairly large number of probability distributions used for statistics signal processing. In this test, we use histogram as test case: the sequential codes will iterate whole data samples one by one in one process, and parallel codes will use built-in histogram function in Spark.
+
+%put performance of Histogram here.   
 
 \subsection{Complicate Stencil Operation}
 
+Stencil codes are most common computations used in seismic image processing and reservoir simulation in oil \& gas industry, and most of codes in this domain are written in MPI or OpenMP programming models that running on huge clusters. But MPI codes involve more complexity of programming and could not handle fault tolerance very well, and although OpenMP make it easy to parallelize sequential codes, but with increasing size of volume of seismic data, SMP will encounter problem of caching large data and performance issue for data partition. 
+We choose scala as programming language for experiments and develop three applications: Sequential codes, Parallel codes using broadcasting variable and Parallel codes with boundary RDD. For the Sequential codes, we just split the big data file into small splits and each split include several inlines, then using 3 nested loops to compute average value of 26 neighbour samples. After computation, each split will be saved into file to be used as input for next iteration. For the Parallel codes with broadcasting variable, the large input data set are distributed to all active nodes in whole cluster as RDD, then each node could get it own data section and apply map function(computation part) on it. Since boundary data is need for Jacobi kernel and there is no communication interfaces between mappers, the boundary Inlines of each split are collected as a variable and broadcasted to all nodes after one iteration, then each node could fetch new boundary inlines in next iterative computation. After implementation of Parallel codes using broadcasting variable, we found the performance of collecting data is very bad, so we design new Parallel codes using boundary RDDs to exchange boundary data and to avoid collecting data in each iteration. 
 
+The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each number denotes one Inline of seismic data. The big seismic data files are stored on HDFS, which will be divided into small splits and send to each node by driver node. Using broadcasting variables shown in top half of diagram, the driver node need collect boundary Inlines from every node, which will take more time on network communication. By changing to boundary RDDs shown in below half diagram, the boundary RDDs are generated from original RDD, but they need repartition and resort for alignment and merge with original RDD to form new RDD.
 
+%put performance of Jacobi here.   
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.6]{figures/JacobiCode.png}
+\caption{Data Flow of Jacobi Parallel Codes}
+\label{JacobiCode}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
