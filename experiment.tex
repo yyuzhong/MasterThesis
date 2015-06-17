@@ -81,7 +81,7 @@ As stated in previous charpter, user could create new application that calls API
 \hline
 Elementwise UFuncs & \shortstack[l]{exp, log, log1p, sqrt, \\sin, cos, tan, asin, acos, atan,\\sinh, cosh, tanh, asinh, acosh, atanh, \\floor, ceil, round, rint, signum, \\abs, isOdd, isEven,sigmoid} \\ 
 \hline
-Operator UFuncs &  \shortstack[l]{OpAdd: a + b, OpSub: a - b, OpMulMatrix: a * b, \\OpMulScalar: a :* b, OpSolveMatrixBy: a \textbackslash b,\\ OpMulInner: a dot b, OpNeg: -a, OpEq: a :== b, OpNe: a:!= b, \\ OpLT: a:\textless b, OpLTE: a :\textless= b, OpGT: a :\textgreater b, OpGTE: a :\textgreater= b, \\OpAnd: a \& b, OpOr: a \textbar b, OpNot: !a } \\
+Operator UFuncs &  \shortstack[l]{OpAdd: a + b, OpSub: a - b, OpMulMatrix: a * b, \\OpMulScalar: a :* b, OpSolveMatrixBy: a \textbackslash\ b,\\ OpMulInner: a dot b, OpNeg: -a, OpEq: a :== b, OpNe: a :!= b, \\ OpLT: a :\textless\ b, OpLTE: a :\textless= b, OpGT: a :\textgreater b, OpGTE: a :\textgreater= b, \\OpAnd: a \& b, OpOr: a \textbar\ b, OpNot: !a } \\
 \hline
 Reduction UFuncs & \shortstack[l]{sum, product, softmax, any, all, \\min, max, argmin, argmax, \\norm, normalize, argsort, argtopk, \\mean, variance, stddev, meanAndVariance }\\
 \hline
@@ -94,10 +94,31 @@ Reduction UFuncs & \shortstack[l]{sum, product, softmax, any, all, \\min, max, a
 The main characteristics of SAC are productivity, performance, usability and scalability. To prove them, some typical applications in seismic data processing are selected to run on SAC. As for usability and productivity, we will show some codes snippet need to be implemented by end user. As for the performance, executation time of both sequential codes and parallel codes on Spark are compared to get speedup factor, and for scalability, we will configure the running environment with different cores and analyse changing of executation time. To cover more seismic applications, we select four applications as test cases: Calculactor, Transformation, Statistics Functions and Jacobi Stencil codes.
 
 \subsection{Calculactor}
-Calculactor should be the most common used tool in scientific computation. Basic arithmetic operations are easy implemented on normal data, but for big data, the situation is totally different. There are already some commerical and free seismic calculators such as Calculactor in Petrel, Seismic Toolkit listed in \cite{SeismicCalculator} etc. All these seismic calculator are software running on PC, so the performance is bad for handling big seismic data, and most of them even could handle big data. Calculactor designed in SAC is mainly focus on handling big data, in which data is distributed on different nodes and run arithmetic functions in parallel. Most functions in calculator are applied on pixel or sample, and each pixel is a Float type in Scala, so all built-in operator could be used on pixel data. The more convenient way to implement such algorithms are use operators and operations provided by Breeze. For trace or line template in SAC, the data types of input and output are DenseVector and DenseMatrix. ScalaNLP Breeze provide many Universal Functions (UFunc) that can operate on scalars, vectors, matrices, counters with little effort \cite{BreezeUFunc}. All Elementwise UFuncs from scala.math such as exp, log and trigonometric functions etc., and Operator UFuncs such as basic Arighmetic, equality and comparison and boolean operations could be applied to DenseVector and DenseMatrix.   
+Calculactor should be the most common used tool in scientific computation. Basic arithmetic operations are easy implemented on normal data, but for big data, the situation is totally different. There are already some commerical and free seismic calculators such as Calculactor in Petrel, Seismic Toolkit listed in \cite{SeismicCalculator} etc. All these seismic calculator are software running on PC, so the performance is bad for handling big seismic data, and most of them even could handle big data. Calculactor designed in SAC is mainly focus on handling big data, in which data is distributed on different nodes and run arithmetic functions in parallel. Most functions in calculator are applied on pixel or sample, and each pixel is a Float type in Scala, so all built-in operator could be used on pixel data. The more convenient way to implement such algorithms are use operators and operations provided by Breeze. For trace or line template in SAC, the data types of input and output are DenseVector and DenseMatrix. ScalaNLP Breeze provide many Universal Functions (UFunc) that can operate on scalars, vectors, matrices, counters with little effort \cite{BreezeUFunc}. All Elementwise UFuncs from scala.math such as exp, log and trigonometric functions etc., and Operator UFuncs such as basic arithmetic, equality and comparison and boolean operations could be applied to DenseVector and DenseMatrix. Table \ref{tab:BreezeUFuncs} shows the functions and operators provided by ScalaNLP Breeze. List \ref{ScalaCode2Line} shows the sample codes of template for processing two Inlines and generate one output Inline.  
+\lstset{language=Java,frame=single}
+\begin{lstlisting}[float,caption=Sample codes of arighmetic operations on two datasets,label=ScalaCode2Line]
 
+class LineApplication2 extends java.io.Serializable {
+    def processLine(line1:DenseMatrix[Double],
+                    line2:DenseMatrix[Double])
+                    :DenseMatrix[Double] = {
+        line1 + sigmoid(ceil(line2)); 
+    }
+}
 
-\subsection{Filter \& Transformation}
+\end{lstlisting}
+
+For the performance comparision, the sequential codes are written in Scala and run with single process. Since the volume size of seismic data may so large that could not be fully cached in memory, so the input data set also need to be splited into small parts and be processed one by one and then save back into disk after each part finished. For the parallel codes running on Spark, user only need to write piece of codes in template. The performance of parallel codes may be affected by algorithms, data distributation, number of cores, memory size on each node and speed of communication link etc. 
+
+% put performance index of calculactor here.     
+
+\subsection{Fourier \& Hilbert Transformation}
+In signal and image processing, Fourier Transform (FT) is the most commonly used algorithm. The signal in time domain was decomposed into a series of frequencies  through FT, and in the frequency domain, many problems sush as filter are easier to perform comparing with in the time domain. Fast Fourier transform (FFT) \cite{FFTWiki} is an algorithm to compute the discrete Fourier transform (DFT) and its inverse by factorizing the DFT matrix into a product of sparse (mostly zero) factors. There are different implementations of FFT, such as FFTW, OpenCV, Kiss FFT, Breeze etc.   
+
+The Hilbert transform \cite{HilbertWiki} is important in the field of signal processing where it is used to derive the analytic representation of a signal u(t). Hilbert transform approach now forms the basis by which almost all amplitude, phase and frequency attributes are calculated by today’s seismic interpretation software \cite{HilbertSeismic}. JTK already provided the Hilbert transform filter class, so we use it as test case by apply Hilbert transform filter on each trace of input seismic data set.
+
+Similar to Calculator, we also comparing performance sequential codes on one single node  with parallel codes runnning on Spark with different configuration of memory and cores. 
+
 
 \subsection{Statistics functions}
 
