@@ -100,8 +100,8 @@ Calculactor should be the most common used tool in scientific computation. Basic
 
 class LineApplication2 extends java.io.Serializable {
     def processLine(line1:DenseMatrix[Double],
-                    line2:DenseMatrix[Double])
-                    :DenseMatrix[Double] = {
+                      line2:DenseMatrix[Double])
+                      :DenseMatrix[Double] = {
         line1 + sigmoid(ceil(line2)); 
     }
 }
