@@ -15,17 +15,17 @@
 
 
 \chapter{\uppercase{Experiments \& Results}}
-To verify the idea proposed in this thesis, we setup environments, develop SAC framework and run some typical seismic applications on cluster in PVAMU cloud computing lab. There are three main layers in SAC: low-level runtime envrionment, SAC framework as middleware and application development interface at up-level. 
+To verify the idea proposed in this thesis, we setup experiment environments, develop SAC framework and run some typical seismic applications on cluster in PVAMU cloud computing lab. There are three main layers in SAC: low-level runtime environment, SAC framework as middleware and application development interface at up-level. Middleware layer of SAC was already discussed in pervious section. Runtime environments is the basic that SAC built on, and the application development interface is entry of user, which will be introduced respectively in the following sections.
 
 \section{Experiments Environment Setup}
 
-The cluster used for conducting experiments consists of 26 nodes, in which one is management node, another is storage node used for managing disk array and other 24 nodes are computation nodes. Each node in such cluster was equipped with Intel Xeon E5-2640 Sandy Bridge CPU (2.5GHz, 12 Cores or 24 Cores with Hyperthreading support), 64GB DDR3 memory and are inter-connected with 1GB ethernet. Each node has its own local disk, and also could access disk array through NFS. Following the architecture stated in previous charpter, we install CentOS 6.5 (Distributed by Redhat) and Oracle JDK 1.8.0\_40 on each node. Hadoop 2.2.0, Spark 1.2.1 and other related libraries are also installed on each node. In configuration of Hadoop, management node was configured as NameNode and other 24 computation nodes as DataNodes. It is similiar in Spark: management node is Master and other computation nodes are Workers. Cassandra was installed on all 24 computation nodes and the first four nodes was selected as seed nodes.
+The cluster used for conducting experiments consists of 26 nodes, in which one is management node, another is storage node used for managing disk array and other 24 nodes are computation nodes. Each node in such cluster was equipped with Intel Xeon E5-2640 Sandy Bridge CPU (2.5GHz, 12 Cores or 24 Cores with Hyperthreading support), 64GB DDR3 memory and are inter-connected with 1GB ethernet. Each node has its own local disk, and also could access disk array through NFS. Following the architecture stated in previous charpter, we install CentOS 6.5 (Distributed by Redhat) and Oracle JDK 1.8.0\_40 on each node. Hadoop 2.2.0, Spark 1.2.1 (update to Spark 1.4.0 late) and other related libraries are also installed on each node. In configuration of Hadoop, management node was configured as NameNode and other 24 computation nodes as DataNodes. It is similiar in Spark: management node is Master and other computation nodes are Workers. Cassandra was installed on all 24 computation nodes and the first four nodes was selected as seed nodes.
 
-The public sample seismic dataset Penobscot \cite{PenobscotData} was selected as experiment data. The original format of Penobscot dataset is SEGY, and to make it easily processed with Spark, we transfer it into two files: one xml file that saves meta data, and aonther 3D data file with dimension size of 600x481x1501 stores actual data samples. The volume size of original data file is about 1.7GB, which is not big enough comparing with data set currently used in oil\&gas industry, so we use it synthesize a new 100GB file for verifying algorithms and models on SAC. Both xml file and data file are stored on HDFS, so that every node could access them and utilize data locality. The intermediate results are stored in Cassandra basing on requirement and final result are persisted on HDFS. 
+The public sample seismic dataset Penobscot \cite{PenobscotData} was selected as experiment data. The original format of Penobscot dataset is SEGY, and to make it easily processed with Spark, we transfer it into two files: one xml file that saves meta data, and another 3D data file with dimension size of 600x481x1501 stores actual data samples. The volume size of original data file is about 1.7GB, which is not big enough comparing with data set currently used in oil\&gas industry, so we use it synthesize a new 100GB file for verifying algorithms and models on SAC. For some extensive time consuming algorithms, we still use 1.7GB file as test data. Both xml file and data file are stored on HDFS, so that every node could access them and utilize data locality. The intermediate results are stored in Cassandra basing on requirement and final result are persisted back to HDFS. 
 
 \section{Application Development Platform}
 
-As stated in previous charpter, user could create new application that calls APIs provide by SAC framework, but another more convenient way is using Web interface provide by SAC platform. In web development interface, SAC platform provides four main components: Projects, Data Sets, Jobs and Workflow. The typical flow is listed below:
+As stated in previous charpter, user could create new application that calls APIs provided by SAC framework directly, but another more convenient way is using Web interface provide by SAC platform. In web development interface, SAC platform provides four main components: Projects, Data Sets, Jobs and Workflow. The typical flow is listed below:
 
 \begin{enumerate}
   \item Create a project or open an existing project. While create new project, user need to select template as shown in Figure \ref{NewProject}.
@@ -77,7 +77,7 @@ As stated in previous charpter, user could create new application that calls API
 \centering
 \caption{Provided UFuncs by ScalaNLP Breeze}
 %\begin{tabular}{|p{4cm} |p{8cm} |}
-\begin{tabular}{|l|l|}
+\begin{tabular}{||l|l||}
 \hline
 Elementwise UFuncs & \shortstack[l]{exp, log, log1p, sqrt, \\sin, cos, tan, asin, acos, atan,\\sinh, cosh, tanh, asinh, acosh, atanh, \\floor, ceil, round, rint, signum, \\abs, isOdd, isEven,sigmoid} \\ 
 \hline
@@ -95,6 +95,7 @@ The main characteristics of SAC are productivity, performance, usability and sca
 
 \subsection{Calculactor}
 Calculactor should be the most common used tool in scientific computation. Basic arithmetic operations are easy implemented on normal data, but for big data, the situation is totally different. There are already some commerical and free seismic calculators such as Calculactor in Petrel, Seismic Toolkit listed in \cite{SeismicCalculator} etc. All these seismic calculator are software running on PC, so the performance is bad for handling big seismic data, and most of them even could handle big data. Calculactor designed in SAC is mainly focus on handling big data, in which data is distributed on different nodes and run arithmetic functions in parallel. Most functions in calculator are applied on pixel or sample, and each pixel is a Float type in Scala, so all built-in operator could be used on pixel data. The more convenient way to implement such algorithms are use operators and operations provided by Breeze. For trace or line template in SAC, the data types of input and output are DenseVector and DenseMatrix. ScalaNLP Breeze provide many Universal Functions (UFunc) that can operate on scalars, vectors, matrices, counters with little effort \cite{BreezeUFunc}. All Elementwise UFuncs from scala.math such as exp, log and trigonometric functions etc., and Operator UFuncs such as basic arithmetic, equality and comparison and boolean operations could be applied to DenseVector and DenseMatrix. Table \ref{tab:BreezeUFuncs} shows the functions and operators provided by ScalaNLP Breeze. List \ref{ScalaCode2Line} shows the sample codes of template for processing two Inlines and generate one output Inline.  
+
 \lstset{language=Java,frame=single}
 \begin{lstlisting}[float,caption=Sample codes of arighmetic operations on two datasets,label=ScalaCode2Line]
 
@@ -105,12 +106,28 @@ class LineApplication2 extends java.io.Serializable {
         line1 + sigmoid(ceil(line2)); 
     }
 }
-
 \end{lstlisting}
 
 For the performance comparision, the sequential codes are written in Scala and run with single process. Since the volume size of seismic data may so large that could not be fully cached in memory, so the input data set also need to be splited into small parts and be processed one by one and then save back into disk after each part finished. For the parallel codes running on Spark, user only need to write piece of codes in template. The performance of parallel codes may be affected by algorithms, data distributation, number of cores, memory size on each node and speed of communication link etc. 
 
 % put performance index of calculactor here.     
+
+\begin{table}[H]
+\caption{Running Time of Calculator on Spark with Different Configurations}
+\centering
+\begin{tabular}{||c| c c c c ||} 
+ \hline
+ Split & 72 Cores & 144 Cores & 288 Cores & 576 Cores \\ [0.5ex] 
+ \hline
+ 1 & 915 & 740 & 722 & 724 \\ 
+ 10 & 212 & 177 & 216 & 442 \\
+ 30 & 278 & 304 & 387 & 502 \\
+ 100 & 493 & 453 & 471 & 827 \\
+ \hline
+\end{tabular}
+\label{table:CalcSpark}
+\end{table}
+
 
 \subsection{Fourier \& Hilbert Transformation}
 In signal and image processing, Fourier Transform (FT) is the most commonly used algorithm. The signal in time domain was decomposed into a series of frequencies  through FT, and in the frequency domain, many problems sush as filter are easier to perform comparing with in the time domain. Fast Fourier transform (FFT) \cite{FFTWiki} is an algorithm to compute the discrete Fourier transform (DFT) and its inverse by factorizing the DFT matrix into a product of sparse (mostly zero) factors. There are different implementations of FFT, such as FFTW, OpenCV, Kiss FFT, Breeze etc. FFTW\cite{FFTW05} emphasizes performance by adapting to the hardware such as SIMD instructions in order to maximize performance, while Breeze aims to be generic, clean and powerful without sacrificing (much) efficiency. Breeze provide more concise interfaces of 1D/2D Fourier transforms and filtering functions, so we use FFT function in Breeze as test case by applying it both in sequential codes and parallel codes runnning on Spark.     
@@ -121,10 +138,57 @@ Similar to Calculator, we also comparing performance sequential codes on one sin
 
 %put performance data of FFT and HTF here.
 
+\begin{table}[H]
+\caption{Running Time of Hilbert Transformation Filter on Spark with Different Configurations}
+\centering
+\begin{tabular}{||c| c c c c ||} 
+ \hline
+ Split & 72 Cores & 144 Cores & 288 Cores & 576 Cores \\ [0.5ex] 
+ \hline
+  1 & 5947 & 3312 &	2004 &	1854 \\
+  10 & 5230 & 2746 &	1646 &	1628 \\
+  30 & 5260 & 2984 &	1839 &	1740 \\
+  100 & 5328 & 3357 &	2425 &	2517 \\
+ \hline
+\end{tabular}
+\label{table:HilbertSpark}
+\end{table}
+
+\begin{table}[H]
+\caption{Running Time of FFT on Spark with Different Configurations}
+\centering
+\begin{tabular}{||c| c c c c ||} 
+ \hline
+ Split & 72 Cores & 144 Cores & 288 Cores & 576 Cores \\ [0.5ex] 
+ \hline
+ 3x3x3 & 627 & 355 & 317 & 517 \\ 
+ 9x9x9 & 506 & 459 & 497 & 700 \\
+ 17x17x17 & 589 & 532 & 728 & 849 \\
+ \hline
+ \end{tabular}
+ \label{table:FFTSpark}
+ \end{table}
+
 \subsection{Statistics functions}
 Descriptive statistics is the basis for data analytics, and in seismic data processing, most of statistical functions were already widely used. Spark itself provides some basic reduce functions (also called Actions) such as mean, variance, standard deviation and histogram on RDDs. Besides such basic statistical functions, Breeze also provides a fairly large number of probability distributions used for statistics signal processing. In this test, we use histogram as test case: the sequential codes will iterate whole data samples one by one in one process, and parallel codes will use built-in histogram function in Spark.
 
 %put performance of Histogram here.   
+
+\begin{table}[H]
+\caption{Running Time of Histogram on Spark with Different Configurations}
+\centering
+\begin{tabular}{||c| c c c c ||} 
+ \hline
+ Split & 72 Cores & 144 Cores & 288 Cores & 576 Cores \\ 
+ \hline
+  1 & 100 &	64 & 50 & 46 \\
+  10 & 216 &	326 & 466 & 639 \\
+  30 & 868 &	903 & 819 & 2113 \\
+  100 & 1802 & 1766 & 9244 & 8491 \\
+ \hline
+\end{tabular}
+\label{table:HistSpark}
+\end{table}
 
 \subsection{Complicate Stencil Operation}
 
@@ -135,6 +199,21 @@ The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each
 
 %put performance of Jacobi here.   
 
+\begin{table}[H]
+\caption{Running Time of Jacobi on Spark with Different Configurations}
+\centering
+\begin{tabular}{||c| c c c c ||} 
+ \hline
+ Split & 72 Cores & 144 Cores & 288 Cores & 576 Cores \\ [0.5ex] 
+ \hline
+ 3x3x3 & 1384 & 1908 & 1928 & 2239 \\ 
+ 9x9x9 & 701 & 508 & 409 & 398 \\
+ 17x17x17 & 196 & 158 & 146 & 150 \\
+ \hline
+\end{tabular}
+\label{table:JacobiSpark}
+\end{table}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 \centering
@@ -143,3 +222,4 @@ The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each
 \label{JacobiCode}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
