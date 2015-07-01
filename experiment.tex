@@ -93,6 +93,28 @@ Reduction UFuncs & \shortstack[l]{sum, product, softmax, any, all, \\min, max, a
 \section{Case Study}
 The main characteristics of SAC are productivity, performance, usability and scalability. To prove them, some typical applications in seismic data processing are selected to run on SAC. As for usability and productivity, we will show some codes snippet need to be implemented by end user. As for the performance, executation time of both sequential codes and parallel codes on Spark are compared to get speedup factor, and for scalability, we will configure the running environment with different cores and analyse changing of executation time. To cover more seismic applications, we select four applications as test cases: Calculactor, Transformation, Statistics Functions and Jacobi Stencil codes.
 
+\begin{table}[H]
+\caption{Running Time of Sequential Codes with Different Split}
+\centering
+\begin{tabular}{||c| c c c ||} 
+ \hline
+ Lines per Split & 12 Lines & 60 Lines & 300 Lines \\ [0.5ex] 
+ \hline
+ Calculator & 4027 & 4244 & 4613 \\ 
+ Hilbert Filter & 7532 & 6257 & 6194 \\
+ Histogram & 4858 & 5508 & 5246 \\
+ \hline
+ \hline
+ Subvolume Size & 3x3x3 & 9x9x9 & 17x17x17 \\ [0.5ex] 
+ \hline
+ FFT & 1395 & 27563 & 596789 \\
+ Jacobi & 5972 & 86466 & 463102 \\
+ \hline
+\end{tabular}
+\label{table:CalcSpark}
+\end{table}
+
+
 \subsection{Calculactor}
 Calculactor should be the most common used tool in scientific computation. Basic arithmetic operations are easy implemented on normal data, but for big data, the situation is totally different. There are already some commerical and free seismic calculators such as Calculactor in Petrel, Seismic Toolkit listed in \cite{SeismicCalculator} etc. All these seismic calculator are software running on PC, so the performance is bad for handling big seismic data, and most of them even could handle big data. Calculactor designed in SAC is mainly focus on handling big data, in which data is distributed on different nodes and run arithmetic functions in parallel. Most functions in calculator are applied on pixel or sample, and each pixel is a Float type in Scala, so all built-in operator could be used on pixel data. The more convenient way to implement such algorithms are use operators and operations provided by Breeze. For trace or line template in SAC, the data types of input and output are DenseVector and DenseMatrix. ScalaNLP Breeze provide many Universal Functions (UFunc) that can operate on scalars, vectors, matrices, counters with little effort \cite{BreezeUFunc}. All Elementwise UFuncs from scala.math such as exp, log and trigonometric functions etc., and Operator UFuncs such as basic arithmetic, equality and comparison and boolean operations could be applied to DenseVector and DenseMatrix. Table \ref{tab:BreezeUFuncs} shows the functions and operators provided by ScalaNLP Breeze. List \ref{ScalaCode2Line} shows the sample codes of template for processing two Inlines and generate one output Inline.  
 
@@ -197,6 +219,15 @@ We choose scala as programming language for experiments and develop three applic
 
 The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each number denotes one Inline of seismic data. The big seismic data files are stored on HDFS, which will be divided into small splits and send to each node by driver node. Using broadcasting variables shown in top half of diagram, the driver node need collect boundary Inlines from every node, which will take more time on network communication. By changing to boundary RDDs shown in below half diagram, the boundary RDDs are generated from original RDD, but they need repartition and resort for alignment and merge with original RDD to form new RDD.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.6]{figures/JacobiCode.png}
+\caption{Data Flow of Jacobi Parallel Codes}
+\label{JacobiCode}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %put performance of Jacobi here.   
 
 \begin{table}[H]
@@ -213,13 +244,4 @@ The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each
 \end{tabular}
 \label{table:JacobiSpark}
 \end{table}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-\centering
-\includegraphics[scale=.6]{figures/JacobiCode.png}
-\caption{Data Flow of Jacobi Parallel Codes}
-\label{JacobiCode}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
