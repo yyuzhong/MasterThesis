@@ -54,10 +54,23 @@ Floor	& floor(a) & floor(a) & floor(a) \\
 \end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\lstset{language=Java,frame=single}
+\begin{lstlisting}[float,caption=Sample codes of arighmetic operations on two datasets,label=ScalaCode2Line]
+
+class LineApplication2 extends java.io.Serializable {
+    def processLine(line1:DenseMatrix[Double],
+                      line2:DenseMatrix[Double])
+                      :DenseMatrix[Double] = {
+        line1 + sigmoid(ceil(line2)); 
+    }
+}
+\end{lstlisting}
+
 
 \section{Performance Analysis}
 There are a lot of tools used for measuring performance of application. To get the execution time, wall clock is the simplest way. But if we want to make some deep analysis to find the bottleneck, more information such as CPU usage, memory usage, disk I/O and network communication metrics need to be collected. The situation becomes more complex if application run in multithread or run on multi-nodes with synchronization. Spark itself provide web UI for monitoring of resource usage of whole cluster, task running status and detail of each stage in task. Nigel's performance Monitor (nmon) could collect miscellaneous metrics information on each node, and Nmon Analyzer could visualize such information for deep analysis. So we use wall clock to get total running time and execution of each stage for sequential codes, and use Spark web monitor UI to get execution time of parallel codes running on Spark. Each node will launch nmon to collect runtime information at the same time of application starts, and then all of these data are merged together, feed to Nmon Analyzer for deep study. 
 
+\ifx true false
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 %\centering
@@ -66,12 +79,12 @@ There are a lot of tools used for measuring performance of application. To get t
 \label{CalcSpeedup}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+\fi 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 %\centering
-\includegraphics[scale=.60]{figures/HtfSpeedup.png}
+\includegraphics[scale=.50]{figures/HtfSpeedup.png}
 \caption{Speedup of Hilbert Transform Filter Codes}
 \label{HtfSpeedup}
 \end{figure}
@@ -81,7 +94,7 @@ There are a lot of tools used for measuring performance of application. To get t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 %\centering
-\includegraphics[scale=.60]{figures/FFTSpeedup.png}
+\includegraphics[scale=.50]{figures/FFTSpeedup.png}
 \caption{Speedup of FFT Codes}
 \label{FFTSpeedup}
 \end{figure}
@@ -90,7 +103,7 @@ There are a lot of tools used for measuring performance of application. To get t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 %\centering
-\includegraphics[scale=.60]{figures/HistSpeedup.png}
+\includegraphics[scale=.50]{figures/HistSpeedup.png}
 \caption{Speedup of Histogram Computation Codes}
 \label{HistSpeedup}
 \end{figure}
@@ -100,7 +113,7 @@ There are a lot of tools used for measuring performance of application. To get t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 %\centering
-\includegraphics[scale=.60]{figures/JacobiSpeedup.png}
+\includegraphics[scale=.50]{figures/JacobiSpeedup.png}
 \caption{Speedup of Jacobi Stencil Codes}
 \label{JacobiSpeedup}
 \end{figure}
