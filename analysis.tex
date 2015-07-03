@@ -18,11 +18,11 @@
 The main goals of SAC are productivity and performance, but how to measure them? Programming productivity \cite{ProgramProductWiki} refers to software development issues and methodologies affecting the quantity and quality of code produced by an individual or team. The principal factors that affect productivity include learning curve (how friendly of user interface and compatibility with existing software), speed of code generation (how many lines of codes need to write) and approach to testing and maintenance (the running time at which user need to wait and debug methods). For performance issue, the execution times and job scheduling policy play key roles. The performance of a system also involves one or more characteristics such as response time, throughput, utilization of computing resources, availability or bandwidth etc. In this thesis, the (Lines of Codes) LOCs to accomplish same task and friendly user interface are discussed for measuring productivity, while execution time (speedup to sequential codes) and throughput are used for measuring performance.  
 
 \section{Productivity Analysis}
-The computer had developed from single core to multicores, but most programmers did not catch up with this trends on time. Our thinking is custom to single thread and single process applications, especially for other domain experts who did not major in computer science. For most application developers, the main tasks of programming models are trying to hide the sophisticated details and making them easy to use. To shorten the learning curve, SAC provide friendly web interface in which user only need to select and coding with template, and all other details such as data distribution, task parallelization and scheduling are transparent to user. In the view of end user, only code snippet of core algorithm need to compose, so it is even simpler than writing sequential codes. To improve usability, Breeze also provides similar operators to those in Matlab and Numpy as show in Table \ref{tab:BreezeOperators}, and all of those could be used directly in template codes of SAC. In Figure \ref{}, it gives rough comparison of LOCs calculator in sequential codes, parallel codes with MPI and template codes with SAC. Since the outlines of most seismic applications are similar, we could divide them into serval categories and abstract commonly used templates. With templates, the outline codes could be reused by all programs in same category, thus make them easy to maintain.   
+The computer had developed from single core to multicores, but most programmers did not catch up with this trends on time. Our thinking is custom to single thread and single process applications, especially for other domain experts who did not major in computer science. For most application developers, the main tasks of programming models are trying to hide the sophisticated details and making them easy to use. To shorten the learning curve, SAC provide friendly web interface in which user only need to select and coding with template, and all other details such as data distribution, task parallelization and scheduling are transparent to user. In the view of end user, only code snippet of core algorithm need to compose, so it is even simpler than writing sequential codes. To improve usability, Breeze also provides similar operators to those in Matlab and Numpy as show in Table \ref{tab:BreezeOperators}, and all of those could be used directly in template codes of SAC. In List \ref{SeqCodeFFT}, \ref{MPICodeFFT} and \ref{SACCodeFFT}, they give a rough comparison of LOCs FFT on subvolume in sequential codes, parallel codes with MPI and template codes with SAC. Since the outlines of most seismic applications are similar, we could divide them into serval categories and abstract commonly used templates. With templates, the outline codes could be reused by all programs in same category, thus make them easy to maintain.   
 
 
 %A table example is going to follow.
-\begin{table}[H]
+\begin{table}[h]
 \centering
 \caption{Operators in Breeze, MATLAB and Numpy}
 \begin{tabular}{||l|l|l|l||}
@@ -55,14 +55,67 @@ Floor	& floor(a) & floor(a) & floor(a) \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \lstset{language=Java,frame=single}
-\begin{lstlisting}[float,caption=Sample codes of arighmetic operations on two datasets,label=ScalaCode2Line]
+\begin{lstlisting}[float,caption= Sequential Pseudo Codes of FFT on Subvolume, label=SeqCodeFFT]
+//Sequential codes
+int applyFFTOnSubvolume() 
+{
+   while(remain splits > 0) 
+   {
+      for(i <- 0 until iSplit)
+      {
+         for(j <- 0 until jDim)
+         {
+            for(k <- 0 until kDim)
+            {
+               subVol <- get all neighbour pixels in 3 loops
+               val dv = new DenseVector(subVol);
+               val fftres = fourierTr(dv).map(a=>a.abs.toFloat); 
+               res(i*kDim*jDim+j*kDim+k) = max(fftres);
+            }
+         }
+      }
+      get next split;
+   }
+}
+\end{lstlisting}
 
-class LineApplication2 extends java.io.Serializable {
-    def processLine(line1:DenseMatrix[Double],
-                      line2:DenseMatrix[Double])
-                      :DenseMatrix[Double] = {
-        line1 + sigmoid(ceil(line2)); 
-    }
+\lstset{language=Java,frame=single}
+\begin{lstlisting}[float,caption= Pseudo Codes of FFT on Subvolume in MPI, label=MPICodeFFT]
+//MPI Codes
+int computeFFTOnSubvolume() 
+{
+   while(remain splits > 0) 
+   {    
+      divide split into small chunk
+      scatter chunks to all worker processes
+      for(i <- 0 until iSplit)
+      {
+         for(j <- 0 until jDim)
+         {
+            for(k <- 0 until kDim)
+            {
+               subVol <- get all neighbour pixels in 3 loops
+               val dv = subVol to vector;
+               val fftres = doFFT on dv; 
+               res(i*kDim*jDim+j*kDim+k) = max(fftres);
+            }
+         }
+      }
+      gather chunks from all worker processes 
+      get next split;
+   }
+}
+\end{lstlisting}
+
+\lstset{language=Java,frame=single}
+\begin{lstlisting}[float,caption= Sample Codes of FFT on Subvolume in Template of SAC,label=SACCodeFFT]
+//Sample Template Codes in SAC
+class PixelApplication extends java.io.Serializable {
+     def processPixel(volume:Array[Float]):Float = {
+         val dv = new DenseVector(volume);
+         val fftres = fourierTr(dv).map(a=>a.abs.toFloat); 
+         max(fftres)
+     }
 }
 \end{lstlisting}
 
@@ -70,9 +123,11 @@ class LineApplication2 extends java.io.Serializable {
 \section{Performance Analysis}
 There are a lot of tools used for measuring performance of application. To get the execution time, wall clock is the simplest way. But if we want to make some deep analysis to find the bottleneck, more information such as CPU usage, memory usage, disk I/O and network communication metrics need to be collected. The situation becomes more complex if application run in multithread or run on multi-nodes with synchronization. Spark itself provide web UI for monitoring of resource usage of whole cluster, task running status and detail of each stage in task. Nigel's performance Monitor (nmon) could collect miscellaneous metrics information on each node, and Nmon Analyzer could visualize such information for deep analysis. So we use wall clock to get total running time and execution of each stage for sequential codes, and use Spark web monitor UI to get execution time of parallel codes running on Spark. Each node will launch nmon to collect runtime information at the same time of application starts, and then all of these data are merged together, feed to Nmon Analyzer for deep study. 
 
+Due to the speed gap between CPU and I/O device such as network or hard disk, main memory has always been the most valuable resource in computer system. Spark boosts computing performance by caching  RDD in memory, but it also bring problem of competition for memory. Without careful plan on memory usage, it will even hold up the overall performance. Spark is running on JVM, so we turn on the GC log option while launching a job, and also use Nmon to monitor memory usage.  
+
 \ifx true false
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 %\centering
 \includegraphics[scale=.60]{figures/CalcSpeedup.png}
 \caption{Speedup of Calculator Codes}
@@ -82,7 +137,7 @@ There are a lot of tools used for measuring performance of application. To get t
 \fi 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 %\centering
 \includegraphics[scale=.50]{figures/HtfSpeedup.png}
 \caption{Speedup of Hilbert Transform Filter Codes}
@@ -92,7 +147,7 @@ There are a lot of tools used for measuring performance of application. To get t
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 %\centering
 \includegraphics[scale=.50]{figures/FFTSpeedup.png}
 \caption{Speedup of FFT Codes}
@@ -100,18 +155,10 @@ There are a lot of tools used for measuring performance of application. To get t
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-%\centering
-\includegraphics[scale=.50]{figures/HistSpeedup.png}
-\caption{Speedup of Histogram Computation Codes}
-\label{HistSpeedup}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 %\centering
 \includegraphics[scale=.50]{figures/JacobiSpeedup.png}
 \caption{Speedup of Jacobi Stencil Codes}
@@ -119,13 +166,94 @@ There are a lot of tools used for measuring performance of application. To get t
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Due to space limitations, we only select two typical application for analysis: one is Hilbert transformation on trace template, the other is Jacobi stencil codes on sub-volume case.
+The running time information is alreay given in previous chapter, and the speedup factors for each applicaton are shown in Figure \ref{HtfSpeedup}, \ref{FFTSpeedup}, \ref{HistSpeedup} and \ref{JacobiSpeedup}. we will make analysis on them respectively in the following sections. 
 
 \subsection{Performance Analysis of Hilbert transformation}
+
+
+\subsection{Performance Analysis of FFT}
+
  
+\subsection{Performance Analysis of Histogram}
+In Figure \ref{HistSpeedup}, the best result comes from 1 line per split running with 576 cores. In 1 line per split with different cores, the speed up factors increase with more cores added. The actual number of cores on whole workers is 288 (each node has 12 cores), and 576 cores are running in hyper-threading mode, so the performance only boost slightly from 288 cores to 576 cores. With increasing split size, the performance decreases drastically, which need deep analysis. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+%\centering
+\includegraphics[scale=.50]{figures/HistSpeedup.png}
+\caption{Speedup of Histogram Computation Codes}
+\label{HistSpeedup}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+%\centering
+\includegraphics[scale=.50]{figures/Hist1_576_CPU.png}
+\caption{CPU Usage of Histogram with 1 Line per Split and 576 Cores }
+\label{Hist1_576_CPU}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\ifx true false
+
+\begin{figure}[h]
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{figures/Hist10_72_CPU.png}
+  \caption{CPU Usage of Histogram with 10 Lines per Split and 72 Cores}
+  \label{Hist10_72_CPU}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{figures/Hist10_72_MEM.png}
+  \caption{Memory Usage of Histogram with 10 Lines per Split and 72 Cores}
+  \label{Hist10_72_MEM}
+\end{minipage}
+\end{figure}
+
+\fi
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{1\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{figures/Hist10_72_CPU.png}
+  \caption{CPU Usage}
+  \label{Hist10_72_CPU}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{figures/Hist10_72_MEM.png}
+  \caption{Memory Usage}
+  \label{Hist10_72_MEM}
+\end{subfigure}
+\caption{Resource Usage of Histogram with 10 Lines per Split and 288 Cores}
+\label{Hist10_72}
+\end{figure}
+
+\begin{figure} [h]
+\centering
+\begin{subfigure}{1\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{figures/Hist10_288_CPU.png}
+  \caption{CPU Usage}
+  \label{Hist10_288_CPU}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{figures/Hist10_288_MEM.png}
+  \caption{Memory Usage}
+  \label{Hist10_288_MEM}
+\end{subfigure}
+\caption{Resource Usage of Histogram with 10 Lines per Split and 288 Cores}
+\label{Hist10_288}
+\end{figure}
 
 \subsection{Performance Analysis of Jacobi iteration}
-
-
 
 

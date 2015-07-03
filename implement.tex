@@ -36,9 +36,8 @@ Figure \ref{SACSWStack} shows the overall software stack used in SAC. In this di
 Figure \ref{SACArch} shows the overall architecture of SAC, in which there are three main parts: data flow, operations on data and user interface.
 The upper part of such diagram shows a complete processing lifecycle of seismic data on SAC; At first, seismic data need to be uploaded to HDFS. In the view of end user, it is still a big file, but HDFS will store it on different nodes block by block. User could also preprocess and view data as needed. To make such a huge file be processed by multi\-nodes, it will be splitted into small partitions and then user's transformations could be applied on them. When all operations on each partition finished, user could run some actions to persist results. Such results could be used for further processing, visualization or statistics etc.  
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.50]{figures/SACSWStack.png}
 \caption{The Software Stack of Seismic Analytics Cloud Platform}
@@ -47,7 +46,7 @@ The upper part of such diagram shows a complete processing lifecycle of seismic 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.50]{figures/SACArch.png}
 \caption{The Architecture of Seismic Analytics Cloud Platform}
@@ -94,7 +93,7 @@ Essentially, seismic data is a 2D plane or 3D volume composed by traces. The dat
 Beside these transformations, there are still some other summary operations or actions in Spark such as count, stats or collect etc. Those functions have no definite template, but are very useful yet. So SAC provides a free template by passing RDD directly to user's application, so user could call any transformations and actions as required. So some sophisticated models that are difficult to split into subtasks or have multiform input or output, free template is also effective. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.50]{figures/template.png}
 \caption{Relationship of Input and Output in Seismic Data Processing}

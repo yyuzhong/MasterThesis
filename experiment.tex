@@ -36,8 +36,8 @@ As stated in previous chapter, user could create new application that calls APIs
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-%\centering
+\begin{figure}[h]
+\centering
 \includegraphics[scale=.60]{figures/NewProject.png}
 \caption{Configure Template on Creating New Project}
 \label{NewProject}
@@ -45,7 +45,7 @@ As stated in previous chapter, user could create new application that calls APIs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.35]{figures/Programming.png}
 \caption{Programming and Running on Web Interface}
@@ -55,7 +55,7 @@ As stated in previous chapter, user could create new application that calls APIs
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.45]{figures/DataSet.png}
 \caption{Seismic Dataset Preview}
@@ -64,7 +64,7 @@ As stated in previous chapter, user could create new application that calls APIs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.60]{figures/Runtime.png}
 \caption{Specify Runtime Parameters}
@@ -76,7 +76,7 @@ As stated in previous chapter, user could create new application that calls APIs
 \ifx true false
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %A table example is going to follow.
-\begin{table}[H]
+\begin{table}[h]
 \centering
 \caption{Provided UFuncs by ScalaNLP Breeze}
 %\begin{tabular}{|p{4cm} |p{8cm} |}
@@ -98,7 +98,7 @@ Reduction UFuncs & \shortstack[l]{sum, product, softmax, any, all, \\min, max, a
 The main characteristics of SAC are productivity, performance, usability and scalability. To prove them, some typical applications in seismic data processing are selected to run on SAC. As for usability and productivity, we will show some codes snippet need to be implemented by end user. As for the performance, executation time of both sequential codes and parallel codes on Spark are compared to get speedup factor, and for scalability, we will configure the running environment with different cores and analyse changing of executation time. To cover more seismic applications, we select four kinds of test cases: Linear Algebra Functions, Transformation and Filter, Statistics Functions and Complicate Stencil Operation to show how to implement them on SAC.
 
 \ifx true false
-\begin{table}[H]
+\begin{table}[h]
 \caption{Running Time of Sequential Codes with Different Split}
 \centering
 \begin{tabular}{||c| c c c ||} 
@@ -149,7 +149,7 @@ class TraceApplication2 extends java.io.Serializable {
 
 \ifx true false
 % put performance index of calculactor here.     
-\begin{table}[H]
+\begin{table}[h]
 \caption{Running Time of Calculator on Spark with Different Configurations}
 \centering
 \begin{tabular}{||c| c c c c ||} 
@@ -175,7 +175,7 @@ Since the FFT and Hilbert transformation are both computation intensive, we will
 
 %put performance data of FFT and HTF here.
 
-\begin{table}[H]
+\begin{table}[h]
 \caption{Running Time of Hilbert Transformation Filter on Spark with Different Configurations}
 \centering
 \begin{tabular}{||c| c c c c ||} 
@@ -194,7 +194,7 @@ Since the FFT and Hilbert transformation are both computation intensive, we will
 \label{table:HilbertSpark}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[h]
 \caption{Running Time of FFT on Spark with Different Configurations}
 \centering
 \begin{tabular}{||c| c c c c ||} 
@@ -216,7 +216,7 @@ Descriptive statistics is the basis for data analytics, and in seismic data proc
 
 %put performance of Histogram here.   
 
-\begin{table}[H]
+\begin{table}[h]
 \caption{Running Time of Histogram on Spark with Different Configurations}
 \centering
 \begin{tabular}{||c| c c c c ||} 
@@ -243,7 +243,7 @@ We choose scala as programming language for experiments and develop three applic
 The data flow of two parallel methods are shown in Figure \ref{JacobiCode}: Each number denotes one Inline of seismic data. The big seismic data files are stored on HDFS, which will be divided into small splits and send to each node by driver node. Using broadcasting variables shown in top half of diagram, the driver node need collect boundary Inlines from every node, which will take more time on network communication. By changing to boundary RDDs shown in below half diagram, the boundary RDDs are generated from original RDD, but they need repartition and resort for alignment and merge with original RDD to form new RDD.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.6]{figures/JacobiCode.png}
 \caption{Data Flow of Jacobi Parallel Codes}
