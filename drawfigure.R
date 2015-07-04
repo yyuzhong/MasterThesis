@@ -20,7 +20,7 @@ histData <- structure(list(S1= c(52.04,81.31,104.08,113.13),
                        S10 = c(24.09,15.96,11.17,8.14), 
                        S30 = c(6.00,5.76,6.35,2.46 ), 
                        S100 = c(2.89,2.95,0.56,0.61 )), 
-                       .Names = c("1 lines", "10 lines", "30 lines", "100 lines"), 
+                       .Names = c("1 line", "10 lines", "30 lines", "100 lines"), 
                        class = "data.frame", row.names = c("72 cores","144 cores","288 cores","576 cores"))
 attach(histData)
 print(histData)
@@ -38,7 +38,7 @@ htfData <- structure(list(S1= c(67.20,120.67,199.43,215.57 ),
                        S10 = c(76.42,145.54,242.81,245.49 ), 
                        S30 = c(75.98,133.93,217.32,229.69 ), 
                        S100 = c(75.01,119.05,164.81,158.78 )), 
-                       .Names = c("1 lines", "10 lines", "30 lines", "100 lines"), 
+                       .Names = c("1 line", "10 lines", "30 lines", "100 lines"), 
                        class = "data.frame", row.names = c("72 cores","144 cores","288 cores","576 cores"))
 attach(htfData)
 print(htfData)
@@ -52,19 +52,18 @@ barplot(as.matrix(htfData), xlab = "Split size",ylab = "Speedup Times",
 
 #FFT Speedup
 
-fftData <- structure(list(S1= c(133.49,235.77,264.04,161.90), 
-                       S10 = c(3268.34,3603.01,3327.53,2362.54), 
-                       S30 = c(60793.45,67307.03,49185.91,42175.90)), 
-                       .Names = c("3x3x3", "9x9x9", "17x17x17"), 
+fftData <- structure(list(S1= c(68.10,121.83,146.84,148.93), 
+                       S10 = c(73.57,163.72,249.03,241.43)), 
+                       .Names = c("3x3x3", "9x9x9"), 
                        class = "data.frame", row.names = c("72 cores","144 cores","288 cores","576 cores"))
 attach(fftData)
 print(fftData)
 
 colours <- c("red", "blue", "yellow", "green")
 
-barplot(as.matrix(fftData), main="Speedup of FFT Codes on Spark to Sequential Codes", ylab = "Speedup Times", 
-        cex.lab = 1.5, cex.main = 1.4, beside=TRUE, legend = TRUE, log="y", col=1, lwd=1:2, angle=c(45, 135), density=seq(5,35,10))
-
+barplot(as.matrix(fftData), xlab = "Subvolume size", ylab = "Speedup Times",
+        cex.lab = 1.5, cex.main = 1.4, beside=TRUE, legend = TRUE, args.legend = list(x = 4, y=280, bty = "n"),
+        col=1, lwd=1:2, angle=c(45, 135), density=seq(5,35,10))
 
 
 #Jacobi Speedup
@@ -80,5 +79,6 @@ print(jacobiData)
 
 colours <- c("red", "blue", "yellow", "green")
 
-barplot(as.matrix(jacobiData),xlab = "Subvolume size", ylab = "Speedup Times",
-        cex.lab = 1.5, cex.main = 1.4, beside=TRUE, legend = TRUE, args.legend = list(x = 4, y=46, bty = "n"))
+barplot(as.matrix(jacobiData),xlab = "Exchange Boundary Data", ylab = "Speedup Times",
+        cex.lab = 1.5, cex.main = 1.4, beside=TRUE, legend = TRUE, args.legend = list(x = 4, y=46, bty = "n"),
+        col=1, lwd=1:2, angle=c(45, 135), density=seq(5,35,10))

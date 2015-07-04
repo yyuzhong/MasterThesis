@@ -17,21 +17,14 @@
 
 \chapter{\uppercase{Future Work and Conclusions}}
 
-Text goes here \cite{ApacheHadoop}.
-
 \section{Conclusions}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-\centering
-\includegraphics[scale=.50]{figures/Penguins.jpg}
-\caption{TAMU figure}
-\label{fig:tamu-fig3}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this paper, we focus on giving a friendly and high-efficiency solution to overcome the challenge of processing big seismic data. SAC was developed and verified with several typical applications, in which there is no prerequisite that users have parallel computing knowledge, and only the core algorighms need to be filled with the help of template provided by SAC. Such template provides friendly user interface for geophycists without expense of performance. Some deep analysis about data partition, memory and network utilization are also given in this paper, which is a good experience for profiling any parallel program. 
+
 \section{Future works}
 
-Text between the figures.  Text between the figures. Text between the figures. Text between the figures.  Text between the figures. Text between the figures. Text between the figures.  Text between the figures. Text between the figures. Text between the figures.  Text between the figures. Text between the figures.
+Although SAC has been proved to be a good candidate for processing seismic data, there are still some other workd to improve. Current templates could hand the basic applications, but for some complicate cases, more templates need to be defined. If an application has many reduce actions such as Jocobi stencil codes that could not run in pipeline in whole scope, the performance could increase too much. It is still a challenge for defining template if worker thread need to comunicate with each other. In the future work, will add more templates to make them fit more applications. More high level machine learning algorithms should be added to SAC and be applied to more advance seismic models. To make SAC easy to be used by high level user and improve communication efficiency, workflow that could connect small piece of algorithms is under development. For the performance analysis of parallel program, more deep research works are planned, such as adjusting GC parameters, providing a high efficiency way for sharing data betweeb all workers etc. In the view of applications developers, more data and computing models are need to investigate, such as streaming data, hybrid mode integrating with legacy codes etc. In short, there is still a long way to go for solving big seismic data processing problems.   
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{figure}[H]
 %\centering
@@ -41,36 +34,4 @@ Text between the figures.  Text between the figures. Text between the figures. T
 %\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Subsection}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{figure}[H]
-%\centering
-%\includegraphics[scale=.50]{figures/Penguins.jpg}
-%\caption{Another TAMU figure}
-%\label{fig:tamu-fig4-2}
-%\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Subsection}
-
-A table example is going to follow.
-
-\begin{table}[H]
-\centering
-\caption{This is a table template}
-\begin{tabular}{|l|c|c|c|c|c|}
-\hline
-Product & 1 & 2 & 3 & 4 & 5\\
-\hline
-Price & 124.- & 136.- & 85.- & 156.- & 23.-\\
-Guarantee [years] & 1 & 2 & - & 3 & 1\\
-Rating & 89\% & 84\% & 51\% & & 45\%\\
-\hline
-\hline
-Recommended & yes & yes & no & no & no\\
-\hline
-\end{tabular}
-\label{tab:template2}
-\end{table}
-\subsubsection{This is a subsubsection}
 
