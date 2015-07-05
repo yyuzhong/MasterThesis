@@ -18,7 +18,7 @@
 The main goals of SAC are productivity and performance, but how to measure them? Programming productivity \cite{ProgramProductWiki} refers to software development issues and methodologies affecting the quantity and quality of code produced by an individual or team. The principal factors that affect productivity include learning curve (how friendly of user interface and compatibility with existing software), speed of code generation (how many lines of codes need to write) and approach to testing and maintenance (the running time at which user need to wait and debug methods). For performance issue, the execution times and job scheduling policy play key roles. The performance of a system also involves one or more characteristics such as response time, throughput, utilization of computing resources, availability or bandwidth etc. In this thesis, the (Lines of Codes) LOCs to accomplish same task and friendly user interface are discussed for measuring productivity, while execution time (speedup to sequential codes) and throughput are used for measuring performance.  
 
 \section{Productivity Analysis}
-The computer had developed from single core to multicores, but most programmers did not catch up with this trends on time. Our thinking is custom to single thread and single process applications, especially for other domain experts who did not major in computer science. For most application developers, the main tasks of programming models are trying to hide the sophisticated details and making them easy to use. To shorten the learning curve, SAC provide friendly web interface in which user only need to select and coding with template, and all other details such as data distribution, task parallelization and scheduling are transparent to user. In the view of end user, only code snippet of core algorithm need to compose, so it is even simpler than writing sequential codes. To improve usability, Breeze also provides similar operators to those in Matlab and Numpy as show in Table \ref{tab:BreezeOperators}, and all of those could be used directly in template codes of SAC. In List \ref{SeqCodeFFT}, \ref{MPICodeFFT} and \ref{SACCodeFFT}, they give a rough comparison of LOCs FFT on subvolume in sequential codes, parallel codes with MPI and template codes with SAC. Since the outlines of most seismic applications are similar, we could divide them into serval categories and abstract commonly used templates. With templates, the outline codes could be reused by all programs in same category, thus make them easy to maintain.   
+The computer had developed from single core to multicores, but most programmers did not catch up with this trends on time. Our thinking is custom to single thread and single process applications, especially for other domain experts who did not major in computer science. For most application developers, the main tasks of programming models are trying to hide the sophisticated details and making them easy to use. To shorten the learning curve, SAC provide friendly web interface in which user only need to select and coding with template, and all other details such as data distribution, task parallelization and scheduling are transparent to user. In the view of end user, only code snippet of core algorithm need to compose, so it is even simpler than writing sequential codes. To improve usability, Breeze also provides similar operators to those in Matlab and Numpy as show in Table \ref{tab:BreezeOperators}, and all of those could be used directly in template codes of SAC. In List \ref{SeqCodeFFT}, \ref{MPICodeFFT} and \ref{SACCodeFFT}, they give a rough comparison of LOCs FFT on sub-volume in sequential codes, parallel codes with MPI and template codes with SAC. Since the outlines of most seismic applications are similar, we could divide them into serval categories and abstract commonly used templates. With templates, the outline codes could be reused by all programs in same category, thus make them easy to maintain.   
 
 
 %A table example is going to follow.
@@ -55,7 +55,7 @@ Floor	& floor(a) & floor(a) & floor(a) \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \lstset{language=Java,frame=single}
-\begin{lstlisting}[float,caption= Sequential Pseudo Codes of FFT on Subvolume, label=SeqCodeFFT]
+\begin{lstlisting}[float,caption= Sequential Pseudo Codes of FFT on Sub-volume, label=SeqCodeFFT]
 //Sequential codes
 int applyFFTOnSubvolume() 
 {
@@ -80,7 +80,7 @@ int applyFFTOnSubvolume()
 \end{lstlisting}
 
 \lstset{language=Java,frame=single}
-\begin{lstlisting}[float,caption= Pseudo Codes of FFT on Subvolume in MPI, label=MPICodeFFT]
+\begin{lstlisting}[float,caption= Pseudo Codes of FFT on Sub-volume in MPI, label=MPICodeFFT]
 //MPI Codes
 int computeFFTOnSubvolume() 
 {
@@ -108,7 +108,7 @@ int computeFFTOnSubvolume()
 \end{lstlisting}
 
 \lstset{language=Java,frame=single}
-\begin{lstlisting}[float,caption= Sample Codes of FFT on Subvolume in Template of SAC,label=SACCodeFFT]
+\begin{lstlisting}[float,caption= Sample Codes of FFT on Sub-volume in Template of SAC,label=SACCodeFFT]
 //Sample Template Codes in SAC
 class PixelApplication extends java.io.Serializable {
      def processPixel(volume:Array[Float]):Float = {
@@ -123,11 +123,11 @@ class PixelApplication extends java.io.Serializable {
 \section{Performance Analysis}
 There are a lot of tools used for measuring performance of application. To get the execution time, wall clock is the simplest way. But if we want to make some deep analysis to find the bottleneck, more information such as CPU usage, memory usage, disk I/O and network communication metrics need to be collected. The situation becomes more complex if application run in multithread or run on multi-nodes with synchronization. Spark itself provide web UI for monitoring of resource usage of whole cluster, task running status and detail of each stage in task. Nigel's performance Monitor (nmon) could collect miscellaneous metrics information on each node, and Nmon Analyzer could visualize such information for deep analysis. So we use wall clock to get total running time and execution of each stage for sequential codes, and use Spark web monitor UI to get execution time of parallel codes running on Spark. Each node will launch nmon to collect runtime information at the same time of application starts, and then all of these data are merged together, feed to Nmon Analyzer for deep study. 
 
-Due to the speed gap between CPU and I/O device such as network or hard disk, main memory has always been the most valuable resource in computer system. Spark boosts computing performance by caching  RDD in memory, but it also bring problem of competition for memory. Without careful plan on memory usage, it will even hold up the overall performance. Spark is running on JVM, so we turn on the GC log option while launching a job, and also use Nmon to monitor memory usage. Basing on running results, we will first get abnormal cases, and then in such case, CPU, Memory, Network I/O and Disk I/O will be inspected in sequence.  
+Due to the speed gap between CPU and I/O device such as network or hard disk, main memory has always been the most valuable resource in computer system. Spark boosts computing performance by caching  RDD in memory, but it also bring problem of competition for memory. Without careful plan on memory usage, it will even hold up the overall performance. Spark is running on JVM, so we turn on the GC log option while launching a job, and also use nmon to monitor memory usage. Basing on running results, we will first get abnormal cases, and then in such case, CPU, Memory, Network I/O and Disk I/O will be inspected in sequence.  
 
 \ifx true false
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.60]{figures/CalcSpeedup.png}
 \caption{Speedup of Calculator Codes}
@@ -140,10 +140,10 @@ Due to the speed gap between CPU and I/O device such as network or hard disk, ma
 The running time information is alreay given in previous chapter, and the speedup factors for each applicaton are shown in Figure \ref{HtfSpeedup}, \ref{FFTSpeedup}, \ref{HistSpeedup} and \ref{JacobiSpeedup}. we will make analysis on them respectively in the following sections. 
 
 \subsection{Performance Analysis of Hilbert Transformation Filter}
-Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark to sequential codes. There is a positive correlation between number of cores and performance in almost each split. The performance boost from 288 cores to 576 cores is not obvious, because 576 cores run in hyper-thread mode. The best speedup is located at 10 lines split with 576 cores, and the performance decrease slightly after increasing split size to 30 lines or 100 lines. Figure \ref{Htf10_576} shows the resource utilization of Hilbert transform filter running with 10 lines per split and 576 cores, in which CPU usage reach 95\% quickly and keep it until near end. There are some small fluctuations due to reading data from network, and the big fluctuations related with system time are coming from garbage collection. Figure \ref{Htf30_288} shows the same data running with 30 lines per split and 288 cores, in CPU usage of which there are 4 peak bands that mean 4 sub tasks and there is one valley at the end that means wating period. Figure \ref{Htf30_288_2} shows resource usage on another node, in which 5 tasks have been run. In case of 30 lines per split, each sub task will take more time and not all nodes get same number of sub tasks, so there are some nodes waiting all tasks finished at end. So with same resource, performance of 10 lines per split is better than the one of 30 lines per split. 
+Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark to sequential codes. There is a positive correlation between number of cores and performance in almost each split. The performance boost from 288 cores to 576 cores is not obvious, because 576 cores run in hyper-thread mode. The best speedup is located at 10 lines split with 576 cores, and the performance decrease slightly after increasing split size to 30 lines or 100 lines. Figure \ref{Htf10_576} shows the resource utilization of Hilbert transform filter running with 10 lines per split and 576 cores, in which CPU usage reach 95\% quickly and keep it until near end. There are some small fluctuations due to reading data from network, and the big fluctuations related with system time are coming from garbage collection. Figure \ref{Htf30_288} shows the same data running with 30 lines per split and 288 cores, in CPU usage of which there are 4 peak bands that mean 4 sub tasks and there is one valley at the end that means waiting period. Figure \ref{Htf30_288_2} shows resource usage on another node, in which 5 tasks have been run. In case of 30 lines per split, each sub task will take more time and not all nodes get same number of sub tasks, so there are some nodes waiting all tasks finished at end. So with same resource, performance of 10 lines per split is better than the one of 30 lines per split. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.50]{figures/HtfSpeedup.png}
 \caption{Speedup of Hilbert Transform Filter Codes}
@@ -152,7 +152,7 @@ Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -176,7 +176,8 @@ Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark 
 \label{Htf10_576}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
+%\ContinuedFloat
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -200,7 +201,7 @@ Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark 
 \label{Htf30_288}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -220,12 +221,12 @@ Figure \ref{HtfSpeedup} show the speedup information of parallel codes on Spark 
 
 
 \subsection{Performance Analysis of FFT}
-Figure \ref{FFTSpeedup} show the speedup information of FFT parallel codes on Spark to sequential codes. There is a positive correlation between number of cores and performance in almost each subvolume size. The performance boost from 288 cores to 576 cores is not obvious, because 576 cores run in hyper-thread mode. Similiar with Hilbert tranformation fileter, FFT codes in this case are also computation intensive: every pixel with its 26 neighbour pixels in 3x3x3 pattern and every one with its 728 neighbours in 9x9x9 pattern are used for FFT. Figure \ref{FFT131_576} and \ref{FFT131_576_2} show resource usage of FFT codes with subvolume size 3x3x3 that run with 576 cores. The overall percentage of CPU utilization is good execpt some spikes that means GC of JVM. At the end of running period, there is a section of waiting time. From Figure \ref{FFT131_576_2}, the disk is busy on NameNode of HDFS; For the 100BG dataset with 36000 inlines, there about 12000 subtask need to write back results HDFS, so it will take NameNode about 3 minutes to complete writting operations.
+Figure \ref{FFTSpeedup} show the speedup information of FFT parallel codes on Spark to sequential codes. There is a positive correlation between number of cores and performance in almost each sub-volume size. The performance boost from 288 cores to 576 cores is not obvious, because 576 cores run in hyper-thread mode. Similar with Hilbert transformation filter, FFT codes in this case are also computation intensive: every pixel with its 26 neighbor pixels in 3x3x3 pattern and every one with its 728 neighbors in 9x9x9 pattern are used for FFT. Figure \ref{FFT131_576} and \ref{FFT131_576_2} show resource usage of FFT codes with sub-volume size 3x3x3 that run with 576 cores. The overall percentage of CPU utilization is good except some spikes that means GC of JVM. At the end of running period, there is a section of waiting time. From Figure \ref{FFT131_576_2}, the disk is busy on NameNode of HDFS; For the 100GB dataset with 36000 inlines, there about 12000 subtask need to write back results HDFS, so it will take NameNode about 3 minutes to complete writing operations.
 
-Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolume size 9x9x9 that running with 576 cores. Comparing with subvolume size 3x3x3, the computational complexity of 9x9x9 increase quickly. The size of split of 9x9x9 case also increase, in which we define 15 lines with 4 overlap on both sides, so each split could get FFT results of 7 lines after computation. The CPU utilization keeps about 95\% from start to end, and the size of split increases thus reduce frequency of communication with NameNode, so the overall speedup of this case is prominent. 
+Figure \ref{FFT474_576} shows the resource utilization of FFT codes with sub-volume size 9x9x9 that running with 576 cores. Comparing with sub-volume size 3x3x3, the computational complexity of 9x9x9 increase quickly. The size of split of 9x9x9 case also increase, in which we define 15 lines with 4 overlap on both sides, so each split could get FFT results of 7 lines after computation. The CPU utilization keeps about 95\% from start to end, and the size of split increases thus reduce frequency of communication with NameNode, so the overall speedup of this case is prominent. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.50]{figures/FFTSpeedup.png}
 \caption{Speedup of FFT Codes}
@@ -234,7 +235,7 @@ Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolum
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -248,11 +249,11 @@ Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolum
   \caption{Memory Usage}
   \label{FFT131_576_MEM}
 \end{subfigure}
-\caption{Resource Usage of FFT with Subvolume size 3x3x3 and 576 Cores(1)}
+\caption{Resource Usage of FFT with Sub-volume size 3x3x3 and 576 Cores(1)}
 \label{FFT131_576}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -266,12 +267,12 @@ Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolum
   \caption{Disk Usage of Master Node (NameNode)}
   \label{FFT131_576_DISK_Master}
 \end{subfigure}
-\caption{Resource Usage of FFT with Subvolume size 3x3x3 and 576 Cores(2)}
+\caption{Resource Usage of FFT with Sub-volume size 3x3x3 and 576 Cores(2)}
 \label{FFT131_576_2}
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -285,7 +286,7 @@ Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolum
   \caption{Memory Usage}
   \label{FFT474_576_MEM}
 \end{subfigure}
-\caption{Resource Usage of FFT with Subvolume size 9x9x9 and 576 Cores}
+\caption{Resource Usage of FFT with Sub-volume size 9x9x9 and 576 Cores}
 \label{FFT474_576}
 \end{figure}
 
@@ -294,9 +295,9 @@ Figure \ref{FFT474_576} shows the resource utlization of FFT codes with subvolum
 
 In Figure \ref{HistSpeedup}, the best result comes from 1 line per split running with 576 cores. In 1 line per split with different cores, the speed up factors increase with more cores added. The actual number of cores on whole workers is 288 (each node has 12 cores), and 576 cores are running in hyper-threading mode, so the performance only boost slightly from 288 cores to 576 cores. With increasing split size, the performance decreases drastically, which need deep analysis. 
 
-Before diving into huge amount of metrics data, it is very important to know the struct of programm. While computing histogram, the first step is get minimum and miximum value of dataset, create bucket array basing on bucket count from input paramater, and then iterate whole dataset and put every element to it's corresponding position in bucket array. Figure \ref{Hist1_576_CPU} shows the CPU usage of histogram configured with 1 line per split and 576 cores. It is clear that there are two stages: the first ridge gets minimum and maximum values, and the second one iterate all data and accumulate results. The CPU utilization quickly ramps to 90\% and stay at same level until stage finish, so there is no much bottle neck and the performance is best among all configuration.
+Before diving into huge amount of metrics data, it is very important to know the struct of program. While computing histogram, the first step is get minimum and maximum value of dataset, create bucket array basing on bucket count from input parameter, and then iterate whole dataset and put every element to it's corresponding position in bucket array. Figure \ref{Hist1_576_CPU} shows the CPU usage of histogram configured with 1 line per split and 576 cores. It is clear that there are two stages: the first ridge gets minimum and maximum values, and the second one iterate all data and accumulate results. The CPU utilization quickly ramps to 90\% and stay at same level until stage finish, so there is no much bottle neck and the performance is best among all configuration.
 
-But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuations in utilization of CPU. The split size increases from 1 line to 10 lines, but the executation time of stage 1 has slowed down almost 6 times. By digging into the implementation codes of Spark as shown in List \ref{SparkCodeHist}, we ascribe it to the foldRight function. 
+But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuations in utilization of CPU. The split size increases from 1 line to 10 lines, but the execution time of stage 1 has slowed down almost 6 times. By digging into the implementation codes of Spark as shown in List \ref{SparkCodeHist}, we ascribe it to the foldRight function. 
 
 \lstset{language=Java,frame=single}
 \begin{lstlisting}[float,caption= Codes Snippet of Histogram in Spark , label=SparkCodeHist]
@@ -312,7 +313,7 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.50]{figures/HistSpeedup.png}
 \caption{Speedup of Histogram Computation Codes}
@@ -321,7 +322,7 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.50]{figures/Hist1_576_CPU.png}
 \caption{CPU Usage of Histogram with 1 Line per Split and 576 Cores }
@@ -331,7 +332,7 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 
 \ifx true false
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
@@ -349,7 +350,7 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 
 \fi
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 %\centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -367,7 +368,7 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 \label{Hist10_72}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 %\centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -387,17 +388,17 @@ But in Figure \ref{Hist10_72} and \ref{Hist10_288}, there are several fluctuatio
 
 \subsection{Performance Analysis of Jacobi iteration}
 
-Jacobi application is more sophisticated than other ones, for it needs to exchange boundary data after each iteration. The computation is not complicate, but in normal case, it will take several iterations to reach balance. In traditional Map/Reduce model, each worker task could not communicate with others, even they may be on the same node. To overcome this problem, some data sharing mechanism need to add for Jacobi stencil codes. Similiar to scatter/gather functions in MPI, Spark itself provides broadcast variables and collect functions, but as shown in Figure \ref{JacobiSpeedup}, the performance is not good. So we introduce distibuted database, Cassandra to save the intermediate boundary data, and all workers need to read boundary data from database before computation and save boundary data back to database after finish in each iteration. To get best performance on Spark, the most important strategy is trying to avoid actions such as collection and persisting data, and maximize pipeline executation for all stages. So in the final implementation of Jacobi case, boundary RDD was introduced, which could get best speedup as shown in Figure \ref{JacobiSpeedup}.
+Jacobi application is more sophisticated than other ones, for it needs to exchange boundary data after each iteration. The computation is not complicate, but in normal case, it will take several iterations to reach balance. In traditional Map/Reduce model, each worker task could not communicate with others, even they may be on the same node. To overcome this problem, some data sharing mechanism need to add for Jacobi stencil codes. Similar to scatter/gather functions in MPI, Spark itself provides broadcast variables and collect functions, but as shown in Figure \ref{JacobiSpeedup}, the performance is not good. So we introduce distributed database, Cassandra to save the intermediate boundary data, and all workers need to read boundary data from database before computation and save boundary data back to database after finish in each iteration. To get best performance on Spark, the most important strategy is trying to avoid actions such as collection and persisting data, and maximize pipeline execution for all stages. So in the final implementation of Jacobi case, boundary RDD was introduced, which could get best speedup as shown in Figure \ref{JacobiSpeedup}.
 
-Figure \ref{JacobiBC131_576} shows the CPU and network utilization of Jacobi codes using broadcast variables, in which usage of CPU is very low, and more time is consumed on waiting and GC. In the 10 iterations, each one need to save boundary and read new one through network, so there are clear spiles in network read and write. With such bottlenecks in this case, the performance is certain to fall. 
+Figure \ref{JacobiBC131_576} shows the CPU and network utilization of Jacobi codes using broadcast variables, in which usage of CPU is very low, and more time is consumed on waiting and GC. In the 10 iterations, each one need to save boundary and read new one through network, so there are clear spikes in network read and write. With such bottlenecks in this case, the performance is certain to fall. 
 
-Figure \ref{JacobiDB131_576} shows the CPU and network utilization of Jacobi codes using Cassandra database to save boundary data, in which the utilization of CPU is better than previous one, and there are no much GC time. But to read boundary data from database and to write those to database, there are still huage amount of network read/write that cause CPU to be under use.
+Figure \ref{JacobiDB131_576} shows the CPU and network utilization of Jacobi codes using Cassandra database to save boundary data, in which the utilization of CPU is better than previous one, and there are no much GC time. But to read boundary data from database and to write those to database, there are still huge amount of network read/write that cause CPU to be under use.
 
 Figure \ref{JacobiBRDD131_576} shows the CPU and network utilization of Jacobi codes using boundary RDD to save edge data. The CPU utilization is better in each iteration, and to merge the boundary RDD with result RDD of each iteration, zip function in Spark still needs to exchange data between worker nodes. Comparing with sequential codes and pervious two methods on Spark, the performance of boundary RDD is much better. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[scale=.50]{figures/JacobiSpeedup.png}
 \caption{Speedup of Jacobi Stencil Codes}
@@ -406,7 +407,7 @@ Figure \ref{JacobiBRDD131_576} shows the CPU and network utilization of Jacobi c
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -430,7 +431,7 @@ Figure \ref{JacobiBRDD131_576} shows the CPU and network utilization of Jacobi c
 \label{JacobiBC131_576}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -454,7 +455,7 @@ Figure \ref{JacobiBRDD131_576} shows the CPU and network utilization of Jacobi c
 \label{JacobiDB131_576}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
@@ -477,7 +478,5 @@ Figure \ref{JacobiBRDD131_576} shows the CPU and network utilization of Jacobi c
 \caption{Resource Usage of Jacobi Codes Using Boundary RDD Sharing Data and Running with 576 Cores}
 \label{JacobiBRDD131_576}
 \end{figure}
-
-
 
 
