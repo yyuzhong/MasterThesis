@@ -22,7 +22,7 @@
 \addcontentsline{toc}{chapter}{TABLE OF CONTENTS}  
 
 \begin{singlespace}
-\renewcommand\contentsname{\normalfont} {\centerline{TABLE OF CONTENTS}}
+\renewcommand\contentsname{\normalfont} {\large\bfseries{\centerline{TABLE OF CONTENTS}}}
 
 %\setcounter{tocdepth}{4} % This puts \subsubsection[]{×} in your List of Tables.  The default is 3.
 
@@ -47,7 +47,8 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{LIST OF FIGURES}  
 
-\renewcommand{\cftloftitlefont}{\center\normalfont\MakeUppercase}
+%\renewcommand{\cftloftitlefont}{\large\bfseries\center\normalfont\MakeUppercase}
+\renewcommand{\cftloftitlefont}{\large\bfseries\center\MakeUppercase}
 
 \setlength{\cftbeforeloftitleskip}{-12pt} %% Positions the LOF title vertically to match the chapter titles
 \renewcommand{\cftafterloftitleskip}{12pt}
@@ -83,7 +84,7 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{LIST OF TABLES}  
 
-\renewcommand{\cftlottitlefont}{\center\normalfont\MakeUppercase}
+\renewcommand{\cftlottitlefont}{\large\bfseries\center\MakeUppercase}
 
 \setlength{\cftbeforelottitleskip}{-12pt} %% Positions the LOT title vertically to match the chapter titles
 

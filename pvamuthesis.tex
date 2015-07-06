@@ -19,7 +19,8 @@
 \usepackage{tocvsec2}
  \usepackage[titletoc]{appendix}
  \usepackage{appendix}
- \usepackage{tamuconfig}
+% \usepackage{tamuconfig}
+ \usepackage{pvamuconfig}
 \usepackage{rotating}
 
 % Added to fix issues with pdf searching in some versions of LaTeX
@@ -57,6 +58,14 @@
 \usepackage{subcaption}
 \usepackage{breakcites}
 \usepackage{url}
+\usepackage{tabularx}
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\usepackage{textcomp}
 
 % Hyperref setup below.  You should be able to get away with using uncommenting just the first line.
 %\usepackage[hidelinks]{hyperref}
@@ -84,6 +93,8 @@
 
 \begin{document}
 
+% Change to PVAMU format
+\ifx true false 
 \renewcommand{\tamumanuscripttitle}{A Template-based Seismic Data Analytics Cloud Platform}
 \renewcommand{\tamupapertype}{Dissertation}
 \renewcommand{\tamufullname}{Yuzhong Yan}
@@ -98,9 +109,25 @@
 \renewcommand{\tamugradmonth}{July}
 \renewcommand{\tamugradyear}{2015}
 \renewcommand{\tamudepartment}{Department of Computer Science}
+\fi
+
+\renewcommand{\pvamucollege}{PRAIRIE VIEW A\protect\&M UNIVERSITY\protect\\COLLEGE OF ENGINEERING\protect\\PRAIRIE VIEW, TEXAS}
+\renewcommand{\pvamumanuscripttitle}{A Template-based Seismic Data Analytics Cloud Platform}
+\renewcommand{\pvamupapertype}{Thesis}
+\renewcommand{\pvamusubmitto}{Submitted to the Graduate School\\In Partial Fulfillment of the Requirements for\\The Degree of}
+\renewcommand{\pvamudegree}{MASTER OF SCIENCE}
+\renewcommand{\pvamumajor}{COMPUTER SCIENCE}
+\renewcommand{\pvamufullname}{Yuzhong Yan}
+\renewcommand{\pvamuadvisor}{Advisor Name}
+\renewcommand{\pvamudepthead}{Department Head}
+\renewcommand{\pvamucollegedean}{College Dean Name}
+\renewcommand{\pvamugraddean}{Graduate School Dean Name}
+\renewcommand{\pvamugradmonth}{August}
+\renewcommand{\pvamugradyear}{2015}
 
 
-\include{titlepage} % This is simply a file that formats and adds your titlepage, please do not edit this unless you have a specific need. .
+%\include{titlepage} % This is simply a file that formats and adds your titlepage, please do not edit this unless you have a specific need. .
+\include{pvamutitle}
 \include{abstract}
 %\include{dedication}
 \include{acknowledgements}
